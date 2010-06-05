@@ -125,12 +125,6 @@ static unsigned long			host_addr;
 
 int					es7000_plat;
 
-/*
- * GSI override for ES7000 platforms.
- */
-
-static unsigned int			base;
-
 static int __cpuinit wakeup_secondary_cpu_via_mip(int cpu, unsigned long eip)
 {
 	unsigned long vect = 0, psaival = 0;
