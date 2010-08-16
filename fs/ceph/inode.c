@@ -442,8 +442,9 @@ int ceph_fill_file_size(struct inode *inode, int issued,
 			 * the file is either opened or mmaped
 			 */
 			if ((issued & (CEPH_CAP_FILE_CACHE|CEPH_CAP_FILE_RD|
-				      CEPH_CAP_FILE_WR|CEPH_CAP_FILE_BUFFER|
-				      CEPH_CAP_FILE_EXCL)) ||
+				       CEPH_CAP_FILE_WR|CEPH_CAP_FILE_BUFFER|
+				       CEPH_CAP_FILE_EXCL|
+				       CEPH_CAP_FILE_LAZYIO)) ||
 			    mapping_mapped(inode->i_mapping) ||
 			    __ceph_caps_file_wanted(ci)) {
 				ci->i_truncate_pending++;
@@ -1199,8 +1200,10 @@ retry_lookup:
 				goto out;
 			}
 			err = ceph_init_dentry(dn);
-			if (err < 0)
+			if (err < 0) {
+				dput(dn);
 				goto out;
+			}
 		} else if (dn->d_inode &&
 			   (ceph_ino(dn->d_inode) != vino.ino ||
 			    ceph_snap(dn->d_inode) != vino.snap)) {
@@ -1499,7 +1502,7 @@ retry:
 	if (wrbuffer_refs == 0)
 		ceph_check_caps(ci, CHECK_CAPS_AUTHONLY, NULL);
 	if (wake)
-		wake_up(&ci->i_cap_wq);
+		wake_up_all(&ci->i_cap_wq);
 }
 
 
