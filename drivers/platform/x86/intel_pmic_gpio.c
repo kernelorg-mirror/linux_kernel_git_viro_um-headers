@@ -208,7 +208,7 @@ static struct irq_chip pmic_irqchip = {
 	.name			= "PMIC-GPIO",
 	.irq_mask		= pmic_irq_mask,
 	.irq_unmask		= pmic_irq_unmask,
-	.irq_set_type		= pmic_irq_type,
+	.irq_set_type = pmic_irq_type, <<<<<<< HEAD
 	.irq_bus_lock		= pmic_irq_buslock,
 	.irq_bus_sync_unlock	= pmic_bus_sync_unlock,
 };
