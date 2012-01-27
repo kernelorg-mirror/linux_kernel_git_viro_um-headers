@@ -1544,6 +1544,7 @@ struct task_struct {
 	 */
 	int nr_dirtied;
 	int nr_dirtied_pause;
+	unsigned long dirty_paused_when; /* start of a write-and-pause period */
 
 #ifdef CONFIG_LATENCYTOP
 	int latency_record_count;
@@ -2087,9 +2088,9 @@ extern int sched_setscheduler_nocheck(struct task_struct *, int,
 extern struct task_struct *idle_task(int cpu);
 /**
  * is_idle_task - is the specified task an idle task?
- * @tsk: the task in question.
+ * @p: the task in question.
  */
-static inline bool is_idle_task(struct task_struct *p)
+static inline bool is_idle_task(const struct task_struct *p)
 {
 	return p->pid == 0;
 }
@@ -2274,7 +2275,7 @@ extern void __cleanup_sighand(struct sighand_struct *);
 extern void exit_itimers(struct signal_struct *);
 extern void flush_itimer_signals(void);
 
-extern NORET_TYPE void do_group_exit(int);
+extern void do_group_exit(int);
 
 extern void daemonize(const char *, ...);
 extern int allow_signal(int);
